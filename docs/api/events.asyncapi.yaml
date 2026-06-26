@@ -1,0 +1,55 @@
+asyncapi: 2.6.0
+info:
+  title: Expense Tracker Events
+  version: 0.1.0
+  description: >
+    The "announce news" bus. Producers publish; interested services subscribe.
+    These contracts keep the event-driven Balance read model (ADR-0004) honest.
+channels:
+  expense.added:
+    description: A new expense was saved.
+    publish: { message: { $ref: '#/components/messages/ExpenseChanged' } }
+  expense.edited:
+    description: An expense changed (re-do the math).
+    publish: { message: { $ref: '#/components/messages/ExpenseChanged' } }
+  expense.deleted:
+    description: An expense was soft-deleted (remove from tally).
+    publish: { message: { $ref: '#/components/messages/ExpenseChanged' } }
+  settlement.recorded:
+    description: A payback was recorded.
+    publish: { message: { $ref: '#/components/messages/SettlementRecorded' } }
+  member.joined:
+    description: Someone joined a group (incl. placeholder merge).
+    publish: { message: { $ref: '#/components/messages/MemberChanged' } }
+components:
+  messages:
+    ExpenseChanged:
+      payload:
+        type: object
+        properties:
+          expense_id: { type: string }
+          group_id: { type: string, nullable: true }
+          friend_pair_id: { type: string, nullable: true }
+          amount: { type: number }
+          payers: { type: array, items: { type: object } }
+          splits: { type: array, items: { type: object } }
+          occurred_at: { type: string, format: date-time }
+    SettlementRecorded:
+      payload:
+        type: object
+        properties:
+          settlement_id: { type: string }
+          scope: { type: string }
+          payer_id: { type: string }
+          payee_id: { type: string }
+          amount: { type: number }
+          occurred_at: { type: string, format: date-time }
+    MemberChanged:
+      payload:
+        type: object
+        properties:
+          group_id: { type: string }
+          user_id: { type: string }
+          change: { type: string, enum: [joined, left, placeholder_merged] }
+          occurred_at: { type: string, format: date-time }
+# NOTE: the concrete bus binding (which broker) is OPEN - Step 2/3.

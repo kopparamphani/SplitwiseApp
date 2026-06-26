@@ -1,0 +1,35 @@
+openapi: 3.0.3
+info:
+  title: People & Groups Service API
+  version: 0.1.0
+  description: Profiles, friends, groups, members, invites, placeholders.
+paths:
+  /me:
+    get: { summary: My profile + preferred currency, responses: { '200': { description: Profile } } }
+  /friends:
+    get:  { summary: List my friends, responses: { '200': { description: Friend list } } }
+    post: { summary: "Add a friend by email or phone", responses: { '201': { description: Added/invited }, '409': { description: Cannot friend yourself } } }
+  /friends/{friendId}:
+    delete:
+      summary: Remove a friend
+      responses:
+        '204': { description: Removed }
+        '409': { description: Blocked - unsettled balance exists }
+  /groups:
+    get:  { summary: My groups, responses: { '200': { description: Group list } } }
+    post: { summary: Create a group, responses: { '201': { description: Created }, '422': { description: Empty name } } }
+  /groups/{groupId}:
+    patch:  { summary: "Rename / toggle simplify (any member)", responses: { '200': { description: Updated } } }
+    delete:
+      summary: Delete a group (any member; warn first if debts open)
+      responses:
+        '204': { description: Deleted }
+        '409': { description: Has unsettled debts - confirm required }
+  /groups/{groupId}/members:
+    post: { summary: "Add a person (user OR placeholder by email/phone)", responses: { '201': { description: Added/invited } } }
+  /groups/{groupId}/members/me:
+    delete:
+      summary: Leave a group
+      responses:
+        '204': { description: Left }
+        '409': { description: Blocked - you owe or are owed }

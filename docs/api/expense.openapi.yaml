@@ -1,0 +1,49 @@
+openapi: 3.0.3
+info:
+  title: Expense Service API
+  version: 0.1.0
+  description: Add/edit/delete expenses, payers, splits, recurrence.
+components:
+  schemas:
+    Payer:
+      type: object
+      properties: { user_id: {type: string}, amount_paid: {type: number} }
+    Split:
+      type: object
+      properties:
+        user_id: { type: string }
+        method: { type: string, enum: [equal, exact, percent, shares, adjustment] }
+        share_value: { type: number }
+    Expense:
+      type: object
+      required: [amount, description, payers, splits]
+      properties:
+        group_id: { type: string, nullable: true }
+        friend_pair_id: { type: string, nullable: true }
+        amount: { type: number, description: "must be > 0" }
+        description: { type: string }
+        category: { type: string }
+        date: { type: string, format: date }
+        note: { type: string, nullable: true }
+        receipt_photo_url: { type: string, nullable: true }
+        payers: { type: array, items: { $ref: '#/components/schemas/Payer' } }
+        splits: { type: array, items: { $ref: '#/components/schemas/Split' } }
+paths:
+  /expenses:
+    post:
+      summary: Add an expense
+      requestBody:
+        content: { application/json: { schema: { $ref: '#/components/schemas/Expense' } } }
+      responses:
+        '201': { description: Saved; "expense.added" event published }
+        '422': { description: "Payers sum != total, or split sum != total, or amount <= 0" }
+  /expenses/{expenseId}:
+    patch:
+      summary: Edit an expense (any member; warn if settled)
+      responses: { '200': { description: Updated; event published }, '409': { description: Settled - confirm required } }
+    delete:
+      summary: Soft-delete an expense (any member; trail kept)
+      responses: { '204': { description: Marked deleted; event published } }
+  /expenses/{expenseId}/recurrence:
+    post:   { summary: "Make it recurring (daily/weekly/monthly/custom)", responses: { '201': { description: Recurrence set } } }
+    delete: { summary: Stop the recurrence, responses: { '204': { description: Stopped } } }

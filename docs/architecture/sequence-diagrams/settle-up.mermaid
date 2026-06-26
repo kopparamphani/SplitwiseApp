@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant W as Web/Mobile App
+    participant G as API Gateway
+    participant BAL as Balance Service
+    participant B as Bus (Event Bus)
+    participant N as Notification Service
+
+    U->>W: Record "I paid Sarah 300" (full or partial)
+    W->>G: POST /settlements
+    G->>BAL: Record settlement
+    Note over BAL: Check amount <= owed<br/>No confirmation needed from other side
+    BAL->>BAL: Update balance_pair + save settlement
+    BAL-->>G: 201 Created
+    G-->>W: Balance updated
+    BAL->>B: Publish "settlement.recorded"
+    B->>N: Deliver event
+    N->>N: Notify the other person

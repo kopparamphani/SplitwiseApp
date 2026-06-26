@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant W as Web/Mobile App
+    participant G as API Gateway
+    participant E as Expense Service
+    participant B as Bus (Event Bus)
+    participant BAL as Balance Service
+    participant N as Notification Service
+
+    U->>W: Fill expense (amount, payers, split, category)
+    W->>G: POST /expenses (with login badge)
+    G->>E: Create expense
+    Note over E: Check payers sum = total<br/>Check split sum = total
+    E->>E: Save to Expense DB
+    E-->>G: 201 Created (expense)
+    G-->>W: Saved
+    E->>B: Publish "expense.added" (the bell)
+    B->>BAL: Deliver "expense.added"
+    BAL->>BAL: Recalculate balances (read model)
+    B->>N: Deliver "expense.added"
+    N->>N: Make notices for group members
+    Note over W,BAL: Balance is eventually consistent:<br/>tiny lag after save before tally updates

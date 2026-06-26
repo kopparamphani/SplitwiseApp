@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: Balance Service API
+  version: 0.1.0
+  description: Read balances (who owes whom), debt-simplify, record settlements.
+paths:
+  /balances/groups/{groupId}:
+    get: { summary: "Balances inside a group (raw or simplified per group setting)", responses: { '200': { description: Per-person balances; sum to zero } } }
+  /balances/friends/{friendId}:
+    get: { summary: One-on-one balance with a friend, responses: { '200': { description: Balance } } }
+  /balances/me/summary:
+    get: { summary: "My grand total across all groups + friends", responses: { '200': { description: "you-are-owed X / you-owe Y" } } }
+  /settlements:
+    post:
+      summary: Record a payback (full or partial)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [scope, payer_id, payee_id, amount]
+              properties:
+                scope: { type: string, description: "group:<id> or friend:<pairId>" }
+                payer_id: { type: string }
+                payee_id: { type: string }
+                amount: { type: number }
+      responses:
+        '201': { description: Recorded; "settlement.recorded" event published }
+        '422': { description: Amount exceeds what is owed }

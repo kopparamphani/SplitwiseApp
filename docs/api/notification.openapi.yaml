@@ -1,0 +1,13 @@
+openapi: 3.0.3
+info:
+  title: Notification Service API
+  version: 0.1.0
+  description: Read notices, manage per-type on/off preferences.
+paths:
+  /notifications:
+    get: { summary: My notices (in-app), responses: { '200': { description: Notice list } } }
+  /notifications/{id}/read:
+    post: { summary: Mark a notice read, responses: { '204': { description: Marked read } } }
+  /notification-prefs:
+    get:   { summary: My on/off settings per notice type, responses: { '200': { description: Prefs } } }
+    patch: { summary: Turn a notice type on/off, responses: { '200': { description: Updated } } }

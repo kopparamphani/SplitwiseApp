@@ -1,0 +1,20 @@
+{
+  "mcpServers": {
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+       "headers": { "Authorization": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}" },
+      "_note": "GitHub MCP — PRs, issues, Actions, reviews. Used by reviewer, devops, orchestrator."
+    },
+    "playwright": {
+      "command": "npx",
+      "args": ["-y", "@playwright/mcp@latest"],
+      "_note": "Playwright MCP — UI/regression. Used by qa-runner only."
+    },
+    "postgres": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://localhost/expense_dev"],
+      "_note": "Postgres MCP — inspect live data while debugging. Scope to implementer/qa. Update connection string per service DB."
+    }
+  }
+}

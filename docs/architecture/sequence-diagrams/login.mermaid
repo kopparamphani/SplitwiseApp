@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant W as Web/Mobile App
+    participant G as API Gateway
+    participant I as Identity Service
+    participant GO as Google Identity
+
+    alt Email + password
+        U->>W: Enter email + password
+        W->>G: POST /auth/login
+        G->>I: Verify credentials
+        I->>I: Check hash, check lockout
+        I-->>G: Session token (or "incorrect")
+        G-->>W: Logged in / rejected
+    else Sign in with Google
+        U->>W: Tap "Sign in with Google"
+        W->>GO: Google sign-in
+        GO-->>W: Google identity proof
+        W->>G: POST /auth/google
+        G->>I: Verify proof with Google
+        I->>GO: Validate token
+        GO-->>I: Valid + Google subject id
+        I->>I: Find or create account
+        I-->>G: Session token
+        G-->>W: Logged in
+    end
