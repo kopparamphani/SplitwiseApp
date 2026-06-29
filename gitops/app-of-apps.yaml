@@ -1,0 +1,36 @@
+# ROOT Application = the "App of Apps" (ADR-0015, ADR-0022).
+# This single Argo Application watches the gitops/apps/ folder in THIS hub repo.
+# Every file in there is itself an Argo Application (one per service). So you
+# install this one thing, and Argo pulls in all the child apps automatically.
+#
+# Like: one light switch that turns on all the room lights.
+#
+# Install once with:
+#   kubectl apply -n argocd -f gitops/app-of-apps.yaml
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: splitwise-root
+  namespace: argocd
+  # Keep the root around even if you delete the app; avoids accidental cascades.
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # THIS hub repo. Replace with the real remote URL when it exists on GitHub.
+    repoURL: https://github.com/kopparamphani/SplitwiseApp.git
+    targetRevision: main
+    # Folder holding the child Application manifests.
+    path: gitops/apps
+    directory:
+      recurse: true
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

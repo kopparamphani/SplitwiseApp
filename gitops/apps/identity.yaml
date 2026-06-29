@@ -1,0 +1,30 @@
+# CHILD Application = the identity service (ADR-0022 polyrepo).
+# It watches the identity SERVICE repo's k8s/ folder and deploys into the
+# splitwise namespace. Manifests live with the code; this just points at them.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: identity
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    # The identity SERVICE repo (its own repo per ADR-0022). Replace with the
+    # real remote URL once it is pushed to GitHub.
+    repoURL: https://github.com/kopparamphani/identity.git
+    targetRevision: main
+    # Manifests live in the service repo's k8s/ folder (kustomize base).
+    path: k8s
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: splitwise
+  syncPolicy:
+    automated:
+      # selfHeal: revert manual drift back to git. prune: delete what git drops.
+      selfHeal: true
+      prune: true
+    syncOptions:
+      # Make the splitwise namespace if it is missing.
+      - CreateNamespace=true
