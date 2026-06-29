@@ -27,6 +27,7 @@
 | [0019](0019-production-kubeadm-hetzner.md) | Production: kubeadm on Hetzner | Accepted |
 | [0020](0020-agents-roster-orchestration.md) | Agent roster & orchestration | Accepted |
 | [0021](0021-mcp-servers.md) | MCP servers (GitHub/Playwright/Postgres) | Accepted |
+| [0022](0022-polyrepo-structure.md) | Repo structure: Polyrepo (service-per-repo, docs+GitOps hub) | Accepted |
 
 ## Template
 ```

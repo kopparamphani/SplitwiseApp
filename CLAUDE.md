@@ -30,6 +30,7 @@ GitHub, docs-as-code, Helm, YAML, agents + orchestration. The app is the vehicle
 - **Event bus:** Apache Kafka. (0008)  **Object storage:** SeaweedFS. (0011)
 - **Local cluster:** kind. (0012)  **Registry:** GHCR + local Distribution. (0013)
 - **CI:** GitHub Actions. (0014)  **CD/GitOps:** Argo CD, manifests in code repo. (0015)
+- **Repos:** Polyrepo — each service owns repo+k8s+CI; this repo = docs+GitOps hub (App-of-Apps); contracts in docs/api. (0022)
 - **Ingress:** Traefik → Kong later. (0016)
 - **Observability:** Prometheus+Loki+Tempo+Grafana via OpenTelemetry, staged. (0017)
 - **Secrets:** Sealed Secrets → ESO+OpenBao later. (0018)
@@ -51,11 +52,11 @@ Main session orchestrates (delegates, never edits). Least privilege: reviewers/a
 
 ## Open decisions still mine (do NOT invent — ask). Tracked in docs/quality/nfr.md
 Password strength · login lockout threshold · reset-link expiry · reminder frequency cap ·
-simultaneous-edit "who wins" rule · monorepo-vs-polyrepo (Phase 4) · trace sampling rate.
+simultaneous-edit "who wins" rule · trace sampling rate.
 
 ## Where things live
 - `glossary.md` · `docs/requirements-spec.md` (REQ-* + QA seeds) · `docs/architecture/workspace.dsl` (C4)
-- `docs/architecture/adr/` (0001–0021) · `docs/architecture/data-models/` · `docs/architecture/sequence-diagrams/`
+- `docs/architecture/adr/` (0001–0022) · `docs/architecture/data-models/` · `docs/architecture/sequence-diagrams/`
 - `docs/api/` (OpenAPI + AsyncAPI) · `docs/quality/` (test-strategy, nfr, threat-model) · `docs/deployment/`
 - `.claude/agents/` (9 subagents + orchestration.md) · `.mcp.json` (MCP config)
 - Render C4: `docker run -it --rm -p 8080:8080 -v "<path>/docs/architecture:/usr/local/structurizr" structurizr/structurizr local`
@@ -63,8 +64,8 @@ simultaneous-edit "who wins" rule · monorepo-vs-polyrepo (Phase 4) · trace sam
 ## Roadmap & status (update as we go)
 - ✅ P1 Brainstorm · ✅ P2 Requirements (signed off)
 - ✅ P3 Design: Step1 C4 · Step2 tech · Step3 platform · Step4 agents/MCP · Step5 docs rebuild (this bundle)
-- 🔄 **P3 Step 6 — transition to Claude Code (current)**
-- ⏳ P4 Planning into iterations  ·  ⏳ P5 Execution (each iteration: dev + dev-test + unit + integration + automation + API tests + CI/CD)
+- ✅ P3 Step 6 — transition to Claude Code
+- 🔄 **P4 Planning into iterations (current)**  ·  ⏳ P5 Execution (each iteration: dev + dev-test + unit + integration + automation + API tests + CI/CD)
 
 ## When in doubt
 Re-read the relevant ADR before changing what it decided. Contradiction → stop, propose a superseding ADR.
