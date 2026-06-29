@@ -65,7 +65,8 @@ simultaneous-edit "who wins" rule · trace sampling rate.
 - ✅ P1 Brainstorm · ✅ P2 Requirements (signed off)
 - ✅ P3 Design: Step1 C4 · Step2 tech · Step3 platform · Step4 agents/MCP · Step5 docs rebuild (this bundle)
 - ✅ P3 Step 6 — transition to Claude Code
-- 🔄 **P4 Planning into iterations (current)**  ·  ⏳ P5 Execution (each iteration: dev + dev-test + unit + integration + automation + API tests + CI/CD)
+- ✅ P4 Planning into iterations (plan: 9 iterations, walking skeleton first)
+- 🔄 **P5 Execution (current)** — ✅ Iteration 0 walking skeleton (identity: CI green + Argo CD GitOps deploy verified on kind) · ⏭ next: Iteration 1 Identity accounts
 
 ## When in doubt
 Re-read the relevant ADR before changing what it decided. Contradiction → stop, propose a superseding ADR.
