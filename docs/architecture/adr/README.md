@@ -28,6 +28,9 @@
 | [0020](0020-agents-roster-orchestration.md) | Agent roster & orchestration | Accepted |
 | [0021](0021-mcp-servers.md) | MCP servers (GitHub/Playwright/Postgres) | Accepted |
 | [0022](0022-polyrepo-structure.md) | Repo structure: Polyrepo (service-per-repo, docs+GitOps hub) | Accepted |
+| [0023](0023-orm-drizzle.md) | ORM: Drizzle (drizzle-kit migrations), stack-wide | Accepted |
+| [0024](0024-auth-session-strategy.md) | Auth: short JWT access + DB-tracked refresh sessions | Accepted |
+| [0025](0025-breached-password-check.md) | Reject known-breached passwords (HIBP k-anonymity) | Accepted |
 
 ## Template
 ```

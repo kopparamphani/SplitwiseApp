@@ -26,7 +26,8 @@ GitHub, docs-as-code, Helm, YAML, agents + orchestration. The app is the vehicle
 - **Architecture:** 5 microservices + API gateway; database-per-service; event-driven. (0001,0002,0004)
 - **Services:** Identity, People & Groups, Expense, Balance (event-fed read model), Notification.
 - **Language everywhere — TypeScript:** NestJS + React/Vite + React Native/Expo. (0005,0009,0010)
-- **DB:** PostgreSQL per service. (0006)  **Comms:** REST now, one gRPC later, gateway→Kong. (0007)
+- **DB:** PostgreSQL per service. (0006)  **ORM:** Drizzle + drizzle-kit, stack-wide. (0023)  **Comms:** REST now, one gRPC later, gateway→Kong. (0007)
+- **Auth:** short JWT access (15m) + DB-tracked opaque refresh sessions (revocable); Argon2id; reject breached pwds via HIBP. (0024,0025)
 - **Event bus:** Apache Kafka. (0008)  **Object storage:** SeaweedFS. (0011)
 - **Local cluster:** kind. (0012)  **Registry:** GHCR + local Distribution. (0013)
 - **CI:** GitHub Actions. (0014)  **CD/GitOps:** Argo CD, manifests in code repo. (0015)
@@ -51,12 +52,11 @@ Main session orchestrates (delegates, never edits). Least privilege: reviewers/a
 - **R2 (parked):** multi-currency + auto-convert, receipt OCR + auto-category, reports/charts, offline+sync.
 
 ## Open decisions still mine (do NOT invent — ask). Tracked in docs/quality/nfr.md
-Password strength · login lockout threshold · reset-link expiry · reminder frequency cap ·
-simultaneous-edit "who wins" rule · trace sampling rate.
+reminder frequency cap · simultaneous-edit "who wins" rule · trace sampling rate.
 
 ## Where things live
 - `glossary.md` · `docs/requirements-spec.md` (REQ-* + QA seeds) · `docs/architecture/workspace.dsl` (C4)
-- `docs/architecture/adr/` (0001–0022) · `docs/architecture/data-models/` · `docs/architecture/sequence-diagrams/`
+- `docs/architecture/adr/` (0001–0025) · `docs/architecture/data-models/` · `docs/architecture/sequence-diagrams/`
 - `docs/api/` (OpenAPI + AsyncAPI) · `docs/quality/` (test-strategy, nfr, threat-model) · `docs/deployment/`
 - `.claude/agents/` (9 subagents + orchestration.md) · `.mcp.json` (MCP config)
 - Render C4: `docker run -it --rm -p 8080:8080 -v "<path>/docs/architecture:/usr/local/structurizr" structurizr/structurizr local`

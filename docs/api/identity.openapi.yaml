@@ -19,9 +19,17 @@ paths:
                 password: { type: string }
                 display_name: { type: string }
       responses:
-        '201': { description: Account created, logged in }
+        '201':
+          description: >-
+            Account created, logged in. Returns an access token (see schema).
+            Refresh token is delivered separately via httpOnly Secure cookie (web)
+            / secure device storage (mobile), per ADR-0024.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
         '409': { description: Email already used }
-        '422': { description: Weak password / bad email }
+        '422': { description: Weak / known-breached password (ADR-0025) or bad email }
   /auth/google:
     post:
       summary: Sign up or log in with a Google identity proof
@@ -31,7 +39,15 @@ paths:
     post:
       summary: Log in with email + password
       responses:
-        '200': { description: Session token returned }
+        '200':
+          description: >-
+            Logged in. Returns a short-lived access token (see schema).
+            Refresh token is delivered separately via httpOnly Secure cookie (web)
+            / secure device storage (mobile), per ADR-0024.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
         '401': { description: Incorrect credentials }
         '429': { description: Too many tries (lockout) }
   /auth/logout:
@@ -50,3 +66,16 @@ paths:
       responses:
         '200': { description: Password changed; old one stops working }
         '410': { description: Link expired or already used }
+components:
+  schemas:
+    TokenResponse:
+      type: object
+      description: >-
+        Access token for Authorization: Bearer header. The matching refresh token
+        is NOT in this body — it rides an httpOnly Secure cookie (web) or secure
+        device storage (mobile), per ADR-0024.
+      required: [access_token, token_type, expires_in]
+      properties:
+        access_token: { type: string, description: Short-lived JWT (15 min) }
+        token_type: { type: string, enum: [Bearer], example: Bearer }
+        expires_in: { type: integer, description: Access-token lifetime in seconds, example: 900 }
