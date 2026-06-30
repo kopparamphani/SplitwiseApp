@@ -38,3 +38,12 @@ and rotated on every `/auth/refresh`. Noted here for the record.
 ### [DONE] Login timing-attack defense
 Fixed in 1a. Login path no longer leaks "does this email exist?" via response
 timing. Noted here for the record.
+
+## Iteration 1b — Google sign-in
+
+### [DONE 1b] Google sign-in
+email_verified enforced on link/create; no sub-rebind; concurrent-signup race handled.
+
+### [TODO] Real audit row for Google link
+Replace the Google-link audit LOG line with a real audit-table row once an audit
+table exists.

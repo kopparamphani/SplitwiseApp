@@ -33,8 +33,44 @@ paths:
   /auth/google:
     post:
       summary: Sign up or log in with a Google identity proof
+      description: >-
+        Verifies the Google ID token server-side (audience = our GOOGLE_CLIENT_ID,
+        issuer accounts.google.com, signature, expiry) and requires the token's
+        email_verified to be true. Then links by verified email: a returning Google
+        user or a verified-email match to an existing local account logs in (200);
+        a brand-new email creates an account (201). On success, behaves like login —
+        returns a TokenResponse and sets the httpOnly Secure refresh cookie, per
+        ADR-0024. Linking only ever happens on a provider-verified email (ADR-0024).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_token]
+              properties:
+                id_token: { type: string, description: Google-issued ID token (JWT) }
       responses:
-        '200': { description: Logged in (existing or new account) }
+        '201':
+          description: >-
+            New account created on first Google sign-in, logged in. Returns an access
+            token (see schema). Refresh token rides an httpOnly Secure cookie (web)
+            / secure device storage (mobile), per ADR-0024.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '200':
+          description: >-
+            Logged in to an existing account (returning Google user, or a
+            verified-email link to an existing local account). Returns an access
+            token; refresh token via httpOnly Secure cookie, per ADR-0024.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401': { description: "Invalid/expired token, Google email not verified, or email already linked to a different Google account" }
+        '422': { description: Missing / invalid id_token }
   /auth/login:
     post:
       summary: Log in with email + password

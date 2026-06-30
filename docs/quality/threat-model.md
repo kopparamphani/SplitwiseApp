@@ -7,6 +7,7 @@ Method: quick STRIDE-style scan of the riskiest spots. (S=spoofing, T=tampering,
 | Spot | Worry | First-pass guard |
 |------|-------|------------------|
 | Login (Identity) | Spoofing: guessing passwords | Hashing + lockout (threshold OPEN) + Google option |
+| Social login link | Escalation: takeover via an unverified third-party email | Standing rule: only link/create on a PROVIDER-VERIFIED email (e.g. Google email_verified=true). Applies to all current + future identity providers. An unverified email must never key an account (ADR-0024). |
 | Password reset | Escalation: stealing an account via reset link | One-time, expiring, hashed token; don't reveal if email exists |
 | API Gateway | Spoofing: calling a service without a valid badge | Verify session/token on every call; services trust only the gateway path |
 | Money endpoints | Tampering: settle more than owed, edit others' splits | Server-side checks (sum = total, settle <= owed); never trust client math |
