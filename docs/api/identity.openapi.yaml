@@ -50,6 +50,25 @@ paths:
                 $ref: '#/components/schemas/TokenResponse'
         '401': { description: Incorrect credentials }
         '429': { description: Too many tries (lockout) }
+  /auth/refresh:
+    post:
+      summary: Get a fresh access token using the refresh-token cookie
+      description: >-
+        Reads the httpOnly refresh_token cookie. On a valid, non-revoked,
+        non-expired session, returns a new access token (TokenResponse). The
+        refresh token is ROTATED: the old one is revoked and a new refresh
+        token is set as a fresh httpOnly Secure cookie on the response, per
+        ADR-0024. No request body — the cookie is the credential.
+      responses:
+        '200':
+          description: >-
+            New access token issued; refresh token rotated (new httpOnly Secure
+            cookie set on the response).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401': { description: Refresh token missing, invalid, revoked, or expired }
   /auth/logout:
     post:
       summary: End the current session

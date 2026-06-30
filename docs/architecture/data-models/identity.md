@@ -25,6 +25,8 @@ Owns: accounts and how a person proves who they are. Never stores expense or gro
 ### session
 - `session_id` (key)
 - `account_id` (link → account)
+- `token_hash` (text, NOT NULL, unique — sha256 of the opaque refresh token; raw token is NEVER stored, only handed to the client)
+- `expires_at` (timestamptz, NOT NULL — refresh session dies here: issued_at + 30 days; refresh refused once now > expires_at)
 - `created_at`, `last_seen_at`, `revoked` (for log-out / "log out everywhere")
 
 **Rules baked in:** one email = one account; password rules + lockout threshold are LOCKED (see NFR doc + ADR-0024/0025).
