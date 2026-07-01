@@ -47,3 +47,24 @@ email_verified enforced on link/create; no sub-rebind; concurrent-signup race ha
 ### [TODO] Real audit row for Google link
 Replace the Google-link audit LOG line with a real audit-table row once an audit
 table exists.
+
+## Iteration 1c — password reset
+
+### [DONE 1c] Password reset
+One-time sha256 token, 1h expiry, atomic consume, constant-time request (no
+enumeration), all-sessions-revoked, sibling-ticket invalidation.
+
+### [TODO] Rate-limit reset/login/signup
+Rate-limit /auth/password-reset/request (and login/signup) — @nestjs/throttler
+(cross-cutting).
+
+### [TODO] Reaper for password_reset rows
+Reaper job to prune expired/used password_reset rows.
+
+### [TODO] Durable reset email
+Fire-and-forget reset email is in-process only; move to a durable outbox/queue
+for prod.
+
+### [DEPLOY] New reset-email env
+New env for deploy: SMTP_HOST, SMTP_PORT, SMTP_FROM, APP_BASE_URL (Mailpit for
+local dev; real SMTP as a Sealed Secret in prod).

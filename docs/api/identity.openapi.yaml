@@ -110,17 +110,50 @@ paths:
       summary: End the current session
       responses:
         '204': { description: Logged out }
-  /auth/reset/request:
+  /auth/password-reset/request:
     post:
-      summary: Ask for a password-reset link (email/password users only)
+      summary: Ask for a password-reset link
+      description: >-
+        Constant-time, no enumeration: ALWAYS answers 202, whether or not an
+        account exists for that email. If an account exists, we mint a one-time
+        token (raw token only in the emailed link; DB stores its sha256 hash),
+        set a 1-hour expiry, and fire off the reset email. Never reveals whether
+        the email is registered.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
       responses:
-        '202': { description: "If the email exists, a link was sent" }
-  /auth/reset/confirm:
+        '202': { description: "If an account exists, a reset link was sent (generic — never reveals whether the email exists)" }
+        '422': { description: Malformed body (e.g. missing / non-email address) }
+  /auth/password-reset/confirm:
     post:
       summary: Set a new password using a reset token
+      description: >-
+        Consumes the one-time reset token (DB match is by sha256 hash of the raw
+        token). Atomic one-time consume — a used token cannot be reused. On
+        success the password is changed and ALL of the account's sessions are
+        revoked (log out everywhere). The 400 is deliberately generic and covers
+        not-found / already-used / expired (1-hour expiry) so nothing leaks.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, new_password]
+              properties:
+                token: { type: string, description: Raw one-time token from the email link }
+                new_password: { type: string }
       responses:
-        '200': { description: Password changed; old one stops working }
-        '410': { description: Link expired or already used }
+        '200': { description: "Password changed; all sessions revoked (log out everywhere)" }
+        '400': { description: "Invalid or expired reset link (generic — covers not-found / already-used / expired)" }
+        '422': { description: Weak / known-breached new password (ADR-0025) }
 components:
   schemas:
     TokenResponse:
