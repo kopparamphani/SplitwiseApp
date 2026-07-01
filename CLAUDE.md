@@ -66,7 +66,7 @@ reminder frequency cap · simultaneous-edit "who wins" rule · trace sampling ra
 - ✅ P3 Design: Step1 C4 · Step2 tech · Step3 platform · Step4 agents/MCP · Step5 docs rebuild (this bundle)
 - ✅ P3 Step 6 — transition to Claude Code
 - ✅ P4 Planning into iterations (plan: 9 iterations, walking skeleton first)
-- 🔄 **P5 Execution (current)** — ✅ Iteration 0 walking skeleton (identity: CI green + Argo CD GitOps deploy verified on kind) · ⏭ next: Iteration 1 Identity accounts
+- 🔄 **P5 Execution (current)** — ✅ Iteration 0 walking skeleton · ✅ Iteration 1 Identity accounts (1a email/pw, 1b Google, 1c reset — tested, reviewed, CI green, deployed to kind via Argo) · ⏭ next: Iteration 2 People & Groups
 
 ## When in doubt
 Re-read the relevant ADR before changing what it decided. Contradiction → stop, propose a superseding ADR.
